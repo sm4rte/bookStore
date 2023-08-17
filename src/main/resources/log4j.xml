@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+<Appenders>
+<File name="FileAppender" fileName="transaction.log" append="true">
+<PatternLayout pattern="%d [%t] %-5p %c{1}:%L - %m%n"/>
+</File>
+<Console name="Console" target="SYSTEM_OUT">
+<PatternLayout pattern="%d %p %c - %m%n"/>
+</Console>
+</Appenders>
+<Loggers>
+<Root level="info">
+<AppenderRef ref="FileAppender"/>
+<AppenderRef ref="Console"/>
+</Root>
+</Loggers>
+</Configuration>
+
+
+<!--
+## LOG4J configuration
+#log4j.rootLogger=INFO, Appender1, Appender2
+#
+#log4j.appender.Appender1=org.apache.log4j.ConsoleAppender
+#log4j.appender.Appender1.layout=org.apache.log4j.PatternLayout
+#log4j.appender.Appender1.layout.ConversionPattern=%-7p %d [%t] %c %x - %m%n
+#
+#log4j.appender.Appender2=org.apache.log4j.FileAppender
+#log4j.appender.Appender2.File=C:src/main/resources
+#log4j.appender.Appender2.layout=org.apache.log4j.PatternLayout
+#log4j.appender.Appender2.layout.ConversionPattern=%-7p %d [%t] %c %x - %m%n-->

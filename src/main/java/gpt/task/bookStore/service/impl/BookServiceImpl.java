@@ -4,12 +4,17 @@ import gpt.task.bookStore.dto.request.BookCreateRequestDto;
 import gpt.task.bookStore.dto.request.BookUpdateRequestDto;
 import gpt.task.bookStore.dto.response.BookResponseDto;
 import gpt.task.bookStore.entity.Book;
+import gpt.task.bookStore.exception.BookNotFoundException;
 import gpt.task.bookStore.repository.BookRepository;
 import gpt.task.bookStore.service.BookService;
 import gpt.task.bookStore.validator.BookCreateRequestValidator;
 import gpt.task.bookStore.validator.BookUpdateRequestValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,6 +30,17 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
+    public Page<BookResponseDto> getAllBooks(int page, int size, Sort sort) {
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Book> booksPage = bookRepository.findAll(pageable);
+        return booksPage.map(this::convertToResponseDto);
+    }
+
+    private BookResponseDto convertToResponseDto(Book book) {
+        return modelMapper.map(book, BookResponseDto.class);
+    }
+
+    @Override
     public BookResponseDto getById(Long id) {
         Optional<Book> bookOptional = bookRepository.findById(id);
         if (bookOptional.isPresent()) {
@@ -32,12 +48,13 @@ public class BookServiceImpl implements BookService {
             BookResponseDto responseDto = new BookResponseDto();
             modelMapper.map(book, responseDto);
             return responseDto;
+        } else {
+            throw new BookNotFoundException("Book with id " + id + " not found!");
         }
-        return null;
     }
 
     @Override
-    public void createBook(BookCreateRequestDto requestDto) throws Exception {
+    public void createBook(BookCreateRequestDto requestDto) {
         createRequestValidator.validate(requestDto);
         Book book = new Book();
         modelMapper.map(requestDto, book);
@@ -45,7 +62,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void updateBook(BookUpdateRequestDto requestDto) throws Exception {
+    public void updateBook(BookUpdateRequestDto requestDto) {
         updateRequestValidator.validate(requestDto);
         Book book = bookRepository.getById(requestDto.getId());
         modelMapper.map(requestDto, book);
@@ -55,6 +72,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteById(Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isEmpty()) {
+            throw new BookNotFoundException("Book with id   " + id + " not found!");
+        }
         bookRepository.deleteById(id);
     }
 }
