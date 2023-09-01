@@ -5,16 +5,19 @@ import gpt.task.bookStore.dto.request.BookUpdateRequestDto;
 import gpt.task.bookStore.dto.response.BookResponseDto;
 import gpt.task.bookStore.entity.Book;
 import gpt.task.bookStore.exception.BookNotFoundException;
+import gpt.task.bookStore.exception.DuplicateItemException;
 import gpt.task.bookStore.repository.BookRepository;
 import gpt.task.bookStore.service.BookService;
-import gpt.task.bookStore.validator.BookCreateRequestValidator;
-import gpt.task.bookStore.validator.BookUpdateRequestValidator;
+import gpt.task.bookStore.validator.book.BookCreateRequestValidator;
+import gpt.task.bookStore.validator.book.BookUpdateRequestValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -56,9 +59,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public void createBook(BookCreateRequestDto requestDto) {
         createRequestValidator.validate(requestDto);
-        Book book = new Book();
-        modelMapper.map(requestDto, book);
-        bookRepository.save(book);
+        try {
+            Book book = new Book();
+            modelMapper.map(requestDto, book);
+            bookRepository.save(book);
+        }
+        catch (DataIntegrityViolationException e){
+            throw new DuplicateItemException("The book with title " + requestDto.getTitle() + " already exists!");
+        }
     }
 
     @Override
@@ -67,7 +75,6 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.getById(requestDto.getId());
         modelMapper.map(requestDto, book);
         bookRepository.save(book);
-
     }
 
     @Override

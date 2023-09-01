@@ -15,11 +15,11 @@ public class Book {
     private Long id;
 
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-    @Column(name = "author", nullable = false)
-    private String author;
+    @Column(name = "author_id", nullable = false)
+    private Long authorId;
 
     @Column(name = "publishedYear")
     private int publishedYear;

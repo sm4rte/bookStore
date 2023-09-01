@@ -13,7 +13,7 @@ public class BookUpdateRequestDto {
 
     private String title;
 
-    private String author;
+    private Long authorId;
 
     private int publishedYear;
 

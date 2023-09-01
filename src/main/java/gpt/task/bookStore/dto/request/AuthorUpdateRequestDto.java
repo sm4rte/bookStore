@@ -6,16 +6,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BookCreateRequestDto {
+public class AuthorUpdateRequestDto {
     @NotBlank
-    private String title;
+    Long id;
 
     @NotBlank
-    private Long authorId;
+    String fullName;
 
     @NotBlank
-    private int publishedYear;
+    String email;
 
-    @NotBlank
-    private double price;
+    String country;
 }

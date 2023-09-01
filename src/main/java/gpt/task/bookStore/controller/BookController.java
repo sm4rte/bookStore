@@ -8,11 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Locale;
 
 @Log4j2
 @RestController
@@ -21,7 +20,6 @@ import java.util.Locale;
 public class BookController {
 
     private final BookService bookService;
-
     @GetMapping("/books")
     public ResponseEntity<Page<BookResponseDto>> getAllBooks(
             @RequestParam(defaultValue = "0") int page,
@@ -33,17 +31,17 @@ public class BookController {
             direction = Sort.Direction.DESC;
         } else
             direction = Sort.Direction.ASC;
-        Sort sort = Sort.by(direction,sortField);
+        Sort sort = Sort.by(direction, sortField);
 
         //Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         //    Sort sort = Sort.by(direction, sortField);
 
-        Page<BookResponseDto> booksPage = bookService.getAllBooks(page, size,sort);
+        Page<BookResponseDto> booksPage = bookService.getAllBooks(page, size, sort);
         return ResponseEntity.ok(booksPage);
     }
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookResponseDto> getByID(@PathVariable("bookId") Long id) {
+    public ResponseEntity<BookResponseDto> getById(@PathVariable("bookId") Long id) {
         log.info("Trying to get book with the id: " + id + "!");
         BookResponseDto book = bookService.getById(id);
         if (book != null) {
