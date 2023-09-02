@@ -16,5 +16,5 @@ public interface BookService {
 
     void deleteById(Long id);
 
-    Page<BookResponseDto> getAllBooks(int page, int size, Sort sort);
+    Page<BookResponseDto> getAllBooks(int page, int size, String sortField, String sortDirection);
 }

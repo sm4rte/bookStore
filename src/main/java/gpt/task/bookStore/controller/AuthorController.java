@@ -19,11 +19,14 @@ public class AuthorController {
 
     private final AuthorService authorService;
 
-    @GetMapping
+    @GetMapping("/authors")
     public ResponseEntity<Page<AuthorResponseDto>> getAllAuthors(@RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "5") int size) {
-        Page<AuthorResponseDto> responseDtos = authorService.getAllAuthors(page, size);
-        return ResponseEntity.ok(responseDtos);
+                                                                 @RequestParam(defaultValue = "10") int size,
+                                                                 @RequestParam(defaultValue = "fullName") String sortField,
+                                                                 @RequestParam(defaultValue = "desc") String sortDirection) {
+        log.info("Trying to get multiple Authors!");
+        Page<AuthorResponseDto> authors = authorService.getAllAuthors(page, size, sortField, sortDirection);
+        return ResponseEntity.ok(authors);
     }
 
     @GetMapping("/{authorId}")

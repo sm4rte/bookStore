@@ -16,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,14 +31,10 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorUpdateRequestDtoValidator updateRequestDtoValidator;
 
     @Override
-    public Page<AuthorResponseDto> getAllAuthors(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<AuthorResponseDto> getAllAuthors(int page, int size, String sortField, String sortDirection) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         Page<Author> authors = authorRepository.findAll(pageable);
-        return authors.map(this::convertToResponseDto);
-    }
-
-    private AuthorResponseDto convertToResponseDto(Author author){
-        return modelMapper.map(author,AuthorResponseDto.class);
+        return authors.map(author -> modelMapper.map(author, AuthorResponseDto.class));
     }
 
     @Override
@@ -48,8 +45,7 @@ public class AuthorServiceImpl implements AuthorService {
             Author author = new Author();
             modelMapper.map(createRequestDto, author);
             authorRepository.save(author);
-        }
-        catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateItemException("Author with email: " + createRequestDto.getEmail() + " already exists!");
         }
     }

@@ -5,6 +5,7 @@ import gpt.task.bookStore.dto.request.AuthorUpdateRequestDto;
 import gpt.task.bookStore.dto.response.AuthorResponseDto;
 import gpt.task.bookStore.entity.Author;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
 public interface AuthorService {
 
@@ -16,6 +17,6 @@ public interface AuthorService {
 
     void deleteById(Long id);
 
-    Page<AuthorResponseDto> getAllAuthors(int page, int size);
+    Page<AuthorResponseDto> getAllAuthors(int page, int size, String sortField, String sortDirection);
 
 }

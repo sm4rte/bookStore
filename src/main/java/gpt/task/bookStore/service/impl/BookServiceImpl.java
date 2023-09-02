@@ -33,15 +33,12 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
-    public Page<BookResponseDto> getAllBooks(int page, int size, Sort sort) {
-        Pageable pageable = PageRequest.of(page, size, sort);
+    public Page<BookResponseDto> getAllBooks(int page, int size, String sortField, String sortDirection) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection),sortField));
         Page<Book> booksPage = bookRepository.findAll(pageable);
-        return booksPage.map(this::convertToResponseDto);
+        return booksPage.map(book -> modelMapper.map(book, BookResponseDto.class));
     }
 
-    private BookResponseDto convertToResponseDto(Book book) {
-        return modelMapper.map(book, BookResponseDto.class);
-    }
 
     @Override
     public BookResponseDto getById(Long id) {

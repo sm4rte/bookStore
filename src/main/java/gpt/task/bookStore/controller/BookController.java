@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,23 +19,14 @@ import org.springframework.web.bind.annotation.*;
 public class BookController {
 
     private final BookService bookService;
+
     @GetMapping("/books")
     public ResponseEntity<Page<BookResponseDto>> getAllBooks(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "0") int size,
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "title") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection) {
-        Sort.Direction direction = null;
-        if (sortDirection.equalsIgnoreCase("desc")) {
-            direction = Sort.Direction.DESC;
-        } else
-            direction = Sort.Direction.ASC;
-        Sort sort = Sort.by(direction, sortField);
-
-        //Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        //    Sort sort = Sort.by(direction, sortField);
-
-        Page<BookResponseDto> booksPage = bookService.getAllBooks(page, size, sort);
+        Page<BookResponseDto> booksPage = bookService.getAllBooks(page, size, sortField, sortDirection);
         return ResponseEntity.ok(booksPage);
     }
 
