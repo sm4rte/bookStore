@@ -3,9 +3,7 @@ package gpt.task.bookStore.service;
 import gpt.task.bookStore.dto.request.AuthorCreateRequestDto;
 import gpt.task.bookStore.dto.request.AuthorUpdateRequestDto;
 import gpt.task.bookStore.dto.response.AuthorResponseDto;
-import gpt.task.bookStore.entity.Author;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 
 public interface AuthorService {
 
@@ -19,4 +17,5 @@ public interface AuthorService {
 
     Page<AuthorResponseDto> getAllAuthors(int page, int size, String sortField, String sortDirection);
 
+    Page<AuthorResponseDto> searchAuthors(String keyword, int page, int size);
 }

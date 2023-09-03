@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -31,10 +30,16 @@ public class BookServiceImpl implements BookService {
     private final BookUpdateRequestValidator updateRequestValidator;
     private final ModelMapper modelMapper;
 
+    @Override
+    public Page<BookResponseDto> searchBooks(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> books = bookRepository.searchByAttribute(keyword, pageable);
+        return books.map(book -> modelMapper.map(book, BookResponseDto.class));
+    }
 
     @Override
     public Page<BookResponseDto> getAllBooks(int page, int size, String sortField, String sortDirection) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection),sortField));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         Page<Book> booksPage = bookRepository.findAll(pageable);
         return booksPage.map(book -> modelMapper.map(book, BookResponseDto.class));
     }
@@ -60,8 +65,7 @@ public class BookServiceImpl implements BookService {
             Book book = new Book();
             modelMapper.map(requestDto, book);
             bookRepository.save(book);
-        }
-        catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateItemException("The book with title " + requestDto.getTitle() + " already exists!");
         }
     }

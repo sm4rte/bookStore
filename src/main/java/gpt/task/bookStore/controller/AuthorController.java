@@ -19,6 +19,15 @@ public class AuthorController {
 
     private final AuthorService authorService;
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<AuthorResponseDto>> searchAuthors(@RequestParam String keyword,
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size ){
+        log.info("Searching for items: " + keyword);
+        Page<AuthorResponseDto> authors = authorService.searchAuthors(keyword, page, size);
+        return ResponseEntity.ok(authors);
+    }
+
     @GetMapping("/authors")
     public ResponseEntity<Page<AuthorResponseDto>> getAllAuthors(@RequestParam(defaultValue = "0") int page,
                                                                  @RequestParam(defaultValue = "10") int size,

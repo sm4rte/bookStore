@@ -31,6 +31,13 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorUpdateRequestDtoValidator updateRequestDtoValidator;
 
     @Override
+    public Page<AuthorResponseDto> searchAuthors(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Author> authors = authorRepository.searchByAttribute(keyword, pageable);
+        return authors.map(author -> modelMapper.map(author, AuthorResponseDto.class));
+    }
+
+    @Override
     public Page<AuthorResponseDto> getAllAuthors(int page, int size, String sortField, String sortDirection) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
         Page<Author> authors = authorRepository.findAll(pageable);

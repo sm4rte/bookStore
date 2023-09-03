@@ -3,11 +3,11 @@ package gpt.task.bookStore.controller;
 import gpt.task.bookStore.dto.request.BookCreateRequestDto;
 import gpt.task.bookStore.dto.request.BookUpdateRequestDto;
 import gpt.task.bookStore.dto.response.BookResponseDto;
+import gpt.task.bookStore.entity.Book;
 import gpt.task.bookStore.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +19,15 @@ import org.springframework.web.bind.annotation.*;
 public class BookController {
 
     private final BookService bookService;
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<BookResponseDto>> searchBooks(@RequestParam String keyword,
+                                                             @RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size) {
+        log.info("Searching for Book " + keyword);
+        Page<BookResponseDto> books = bookService.searchBooks(keyword, page, size);
+        return ResponseEntity.ok(books);
+    }
 
     @GetMapping("/books")
     public ResponseEntity<Page<BookResponseDto>> getAllBooks(
